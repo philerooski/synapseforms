@@ -11,12 +11,14 @@ output_submission_csv <- function(data, output_dir) {
 
 #' Log into Synapse
 #'
-#' Log into Synapse. Assumes credentials are stored.
+#' Log into Synapse.
 #'
+#' @param username Your username
+#' @param password Your password
 #' @export
 #' @return Synapse login object from
-log_into_synapse <- function() {
+log_into_synapse <- function(username = NULL, password = NULL) {
   synapse <- reticulate::import("synapseclient")
-  syn <- synapse$login()
-  syn
+  syn <- synapse$login(username, password)
+  return(syn)
 }

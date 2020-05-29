@@ -39,7 +39,10 @@ get_submissions_metadata <- function(syn, group, all_users = TRUE,
   if (!all_users) {
     uri <- "https://repo-prod.prod.sagebase.org/repo/v1/form/data/list"
   }
-  body <- glue::glue('{{"filterByState":["{state_filter}"],"groupId":"{group}"}}') # nolint
+  state_filter_str <- paste(state_filter, collapse = "\",\"")
+  query_string <- '{{"filterByState":["{state_filter_str}"],"groupId":"{group}"}}' # nolint
+  print(glue::glue(query_string))
+  body <- glue::glue(query_string)
   response <- syn$restPOST(
     uri = uri,
     body = body
@@ -50,7 +53,8 @@ get_submissions_metadata <- function(syn, group, all_users = TRUE,
   metadata <- get_json_as_df(data = response$page)
 
   while (length(response) == 2) {
-    body <- glue::glue('{{"filterByState":["{state_filter}"],"groupId":"{group}","nextPageToken":"{response$nextPageToken}"}}') # nolint
+    query_string <- '{{"filterByState":["{state_filter_str}"],"groupId":"{group}","nextPageToken":"{response$nextPageToken}"}}' # nolint
+    body <- glue::glue(query_string)
     response <- syn$restPOST(
       uri = uri,
       body = body
